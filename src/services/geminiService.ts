@@ -1,5 +1,7 @@
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || '';
+
 export async function extractBrandIdentity(name: string, website: string) {
-  const response = await fetch('/api/ai/brand-identity', {
+  const response = await fetch(`${API_BASE}/api/ai/brand-identity`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, website })
@@ -9,7 +11,7 @@ export async function extractBrandIdentity(name: string, website: string) {
 }
 
 export async function tagAsset(assetUrl: string) {
-  const response = await fetch('/api/ai/tag-asset', {
+  const response = await fetch(`${API_BASE}/api/ai/tag-asset`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ assetUrl })
@@ -19,7 +21,7 @@ export async function tagAsset(assetUrl: string) {
 }
 
 export async function generateCreativeContent(platform: string, goal: string, offer: string, cta: string, brand: any) {
-  const response = await fetch('/api/ai/generate-creative', {
+  const response = await fetch(`${API_BASE}/api/ai/generate-creative`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ platform, goal, offer, cta, brand })
@@ -29,7 +31,7 @@ export async function generateCreativeContent(platform: string, goal: string, of
 }
 
 export async function generateImagenImages(prompt: string, count: number = 1) {
-  const response = await fetch('/api/ai/generate-image', {
+  const response = await fetch(`${API_BASE}/api/ai/generate-image`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt, count })
@@ -40,7 +42,7 @@ export async function generateImagenImages(prompt: string, count: number = 1) {
 }
 
 export async function editImagenImage(base64Image: string, prompt: string) {
-  const response = await fetch('/api/ai/edit-image', {
+  const response = await fetch(`${API_BASE}/api/ai/edit-image`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ base64Image, prompt })
@@ -51,7 +53,7 @@ export async function editImagenImage(base64Image: string, prompt: string) {
 }
 
 export async function generateVeoVideo(prompt: string) {
-  const response = await fetch('/api/ai/generate-video', {
+  const response = await fetch(`${API_BASE}/api/ai/generate-video`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt })
