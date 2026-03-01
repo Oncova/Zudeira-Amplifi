@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Layout, 
-  Upload, 
-  Sparkles, 
-  Library, 
-  Settings, 
-  ChevronRight, 
-  Plus, 
-  Trash2, 
-  Calendar, 
-  Check, 
+import {
+  Layout,
+  Upload,
+  Sparkles,
+  Library,
+  Settings,
+  ChevronRight,
+  Plus,
+  Trash2,
+  Calendar,
+  Check,
   AlertCircle,
   ExternalLink,
   Instagram,
@@ -54,24 +54,24 @@ const IMAGEN_PROMPTS = [
 
 // --- Mock Data & Services ---
 const INITIAL_BRAND: BrandIdentity = {
-  colors: ['#D4AF37', '#FFFFFF', '#FF6321', '#000000', '#F5F5F0'],
-  tone: 'Conversational, Warm, Encouraging, Service-first, Solution-oriented',
-  audience: ['Young Professionals (25-45)', 'Parents', 'Couples', 'Community Organizers'],
+  colors: ['#0A0510', '#D4AF37', '#B6718E', '#FFFFFF', '#000000'],
+  tone: 'Raw, authentic, premium, almost confrontational, culturally tuned-in.',
+  audience: ['Young Professionals (25-45)', 'Upscale Event Hosts', 'Couples', 'Community Organizers'],
   valueProps: [
-    'One call. Complete event.',
-    'Enjoy your event. We handle the rest.',
-    'Designed around your vision.',
-    'Events guests won’t forget.'
+    'Stop settling for average.',
+    'If you want them talking about it next year, call us.',
+    'Premium event design for those who know the difference.',
+    'Events engineered for FOMO.'
   ],
-  keywords: ['Stress-free', 'Custom', 'Personalization', 'Convenience', 'Memorable'],
-  constraints: ['NOT corporate', 'NOT luxury formal', 'DMV region focused']
+  keywords: ['Exclusive', 'High-end', 'Unforgettable', 'Premium', 'Status'],
+  constraints: ['Avoid cliché marketing language', 'No stock photo vibes', 'Bold and disruptive']
 };
 
 export default function App() {
-  const [onboarded, setOnboarded] = useState(false);
+  const [onboarded, setOnboarded] = useState(true);
   const [activeTab, setActiveTab] = useState<'brand' | 'upload' | 'create' | 'library'>('brand');
-  const [business, setBusiness] = useState<BusinessProfile>({ 
-    name: 'Events Made Easy', 
+  const [business, setBusiness] = useState<BusinessProfile>({
+    name: 'Events Made Easy Designs',
     website: 'https://eventsmadeeasy4u.com/',
     ig: '@eventsmadeeasy',
     fb: 'https://www.facebook.com/people/Events-Made-Easy/100069703359100/?sk=about',
@@ -105,14 +105,14 @@ export default function App() {
     try {
       // 1. Extract Brand Identity on Frontend
       const brandData = await extractBrandIdentity(business.name, business.website);
-      
+
       // 2. Save to Backend
       await fetch('/api/brand/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          businessId, 
-          website: business.website, 
+        body: JSON.stringify({
+          businessId,
+          website: business.website,
           name: business.name,
           brandIdentity: brandData
         })
@@ -131,7 +131,7 @@ export default function App() {
   if (!onboarded) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-md w-full glass-card p-8 rounded-3xl shadow-2xl border border-white/10"
@@ -146,7 +146,7 @@ export default function App() {
           {isExtracting ? (
             <div className="space-y-6 py-12 text-center">
               <div className="relative w-16 h-16 mx-auto">
-                <motion.div 
+                <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                   className="w-full h-full border-4 border-white/10 border-t-violet-500 rounded-full"
@@ -163,60 +163,60 @@ export default function App() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1">Business Name</label>
-                  <input 
+                  <input
                     required
-                    type="text" 
+                    type="text"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:ring-2 focus:ring-violet-500 outline-none transition-all"
                     placeholder="Acme Corp"
                     value={business.name}
-                    onChange={e => setBusiness({...business, name: e.target.value})}
+                    onChange={e => setBusiness({ ...business, name: e.target.value })}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1">Website URL</label>
-                  <input 
+                  <input
                     required
-                    type="url" 
+                    type="url"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:ring-2 focus:ring-violet-500 outline-none transition-all"
                     placeholder="https://acme.com"
                     value={business.website}
-                    onChange={e => setBusiness({...business, website: e.target.value})}
+                    onChange={e => setBusiness({ ...business, website: e.target.value })}
                   />
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-slate-400 mb-1 text-[10px] uppercase tracking-wider">Instagram</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:ring-2 focus:ring-violet-500 outline-none transition-all text-sm"
                       placeholder="@handle"
                       value={business.ig}
-                      onChange={e => setBusiness({...business, ig: e.target.value})}
+                      onChange={e => setBusiness({ ...business, ig: e.target.value })}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-400 mb-1 text-[10px] uppercase tracking-wider">Facebook</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:ring-2 focus:ring-violet-500 outline-none transition-all text-sm"
                       placeholder="URL"
                       value={business.fb}
-                      onChange={e => setBusiness({...business, fb: e.target.value})}
+                      onChange={e => setBusiness({ ...business, fb: e.target.value })}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-400 mb-1 text-[10px] uppercase tracking-wider">TikTok</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:ring-2 focus:ring-violet-500 outline-none transition-all text-sm"
                       placeholder="@handle"
                       value={business.tt}
-                      onChange={e => setBusiness({...business, tt: e.target.value})}
+                      onChange={e => setBusiness({ ...business, tt: e.target.value })}
                     />
                   </div>
                 </div>
               </div>
-              <button 
+              <button
                 type="submit"
                 className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-4 rounded-xl shadow-lg shadow-violet-500/20 transition-all flex items-center justify-center gap-2"
               >
@@ -232,54 +232,54 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden">
       <div className="atmosphere" />
-      
+
       {/* Sidebar Navigation */}
       <nav className="w-full md:w-72 glass-card border-r border-white/10 p-8 flex flex-col gap-10 z-10">
         <div className="flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-xl shadow-violet-500/20 group-hover:scale-110 transition-transform duration-300">
-            <Sparkles className="text-white w-7 h-7" />
+          <div className="w-12 h-12 bg-gradient-to-br from-[#1A0B2E] to-[#0A0510] border border-[#D4AF37]/40 rounded-2xl flex items-center justify-center shadow-xl shadow-[#D4AF37]/10 group-hover:scale-110 transition-transform duration-300">
+            <Sparkles className="text-[#D4AF37] w-6 h-6" />
           </div>
           <div className="flex flex-col">
-            <span className="font-black text-xl tracking-tighter text-white leading-none">AMPLIFI</span>
-            <span className="text-[10px] font-bold text-violet-400 tracking-[0.2em] uppercase">Zuldeira AI</span>
+            <span className="font-black text-lg tracking-widest text-[#D4AF37] leading-none uppercase">Events Made Easy</span>
+            <span className="text-[9px] font-bold text-[#B6718E] tracking-[0.3em] uppercase mt-1">Design Lab</span>
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <NavButton 
-            active={activeTab === 'brand'} 
-            onClick={() => setActiveTab('brand')} 
-            icon={<Target className="w-5 h-5" />} 
-            label="Brand Pulse" 
+          <NavButton
+            active={activeTab === 'brand'}
+            onClick={() => setActiveTab('brand')}
+            icon={<Target className="w-5 h-5" />}
+            label="Brand Pulse"
           />
-          <NavButton 
-            active={activeTab === 'upload'} 
-            onClick={() => setActiveTab('upload')} 
-            icon={<ImageIcon className="w-5 h-5" />} 
-            label="Media Assets" 
+          <NavButton
+            active={activeTab === 'upload'}
+            onClick={() => setActiveTab('upload')}
+            icon={<ImageIcon className="w-5 h-5" />}
+            label="Media Assets"
           />
-          <NavButton 
-            active={activeTab === 'create'} 
-            onClick={() => setActiveTab('create')} 
-            icon={<Sparkles className="w-5 h-5" />} 
-            label="Ad Engine" 
+          <NavButton
+            active={activeTab === 'create'}
+            onClick={() => setActiveTab('create')}
+            icon={<Sparkles className="w-5 h-5" />}
+            label="Ad Engine"
           />
-          <NavButton 
-            active={activeTab === 'library'} 
-            onClick={() => setActiveTab('library')} 
-            icon={<Calendar className="w-5 h-5" />} 
-            label="Schedule & Export" 
+          <NavButton
+            active={activeTab === 'library'}
+            onClick={() => setActiveTab('library')}
+            icon={<Calendar className="w-5 h-5" />}
+            label="Schedule & Export"
           />
         </div>
 
         <div className="mt-auto p-5 bg-white/5 rounded-[2rem] border border-white/5 space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-emerald-500/10">
-              {business.name?.charAt(0) || 'B'}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#B6718E] to-[#1A0B2E] border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] font-bold text-xs shadow-lg shadow-[#B6718E]/20">
+              {business.name?.charAt(0) || 'E'}
             </div>
             <div className="flex flex-col min-w-0">
-              <p className="text-sm font-bold truncate text-white">{business.name || 'My Business'}</p>
-              <p className="text-[10px] text-slate-400 truncate uppercase tracking-wider font-semibold">Active Profile</p>
+              <p className="text-sm font-bold truncate text-white">{business.name || 'Events Made Easy'}</p>
+              <p className="text-[10px] text-[#B6718E] truncate uppercase tracking-wider font-semibold">Active Profile</p>
             </div>
           </div>
           <div className="pt-3 border-t border-white/5 flex items-center justify-between">
@@ -287,7 +287,7 @@ export default function App() {
               <Globe className="w-3 h-3 text-slate-500" />
               <Instagram className="w-3 h-3 text-slate-500" />
             </div>
-            <button className="text-[10px] font-bold text-violet-400 hover:text-violet-300 transition-colors uppercase tracking-widest">Switch</button>
+            <button className="text-[10px] font-bold text-[#D4AF37] hover:text-white transition-colors uppercase tracking-widest">Switch</button>
           </div>
         </div>
       </nav>
@@ -302,20 +302,20 @@ export default function App() {
             <UploadTab key="upload" assets={assets} setAssets={setAssets} />
           )}
           {activeTab === 'create' && (
-            <CreateTab 
-              key="create" 
-              brand={brand} 
-              assets={assets} 
-              creatives={creatives} 
-              setCreatives={setCreatives} 
+            <CreateTab
+              key="create"
+              brand={brand}
+              assets={assets}
+              creatives={creatives}
+              setCreatives={setCreatives}
             />
           )}
           {activeTab === 'library' && (
-            <LibraryTab 
-              key="library" 
-              creatives={creatives} 
-              schedule={schedule} 
-              setSchedule={setSchedule} 
+            <LibraryTab
+              key="library"
+              creatives={creatives}
+              schedule={schedule}
+              setSchedule={setSchedule}
             />
           )}
         </AnimatePresence>
@@ -328,24 +328,24 @@ export default function App() {
 
 function NavButton({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) {
   return (
-    <button 
+    <button
       onClick={onClick}
       className={`
         flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group relative
-        ${active 
-          ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' 
+        ${active
+          ? 'bg-white/10 text-white shadow-lg border border-white/5 backdrop-blur-md'
           : 'text-slate-400 hover:text-white hover:bg-white/5'
         }
       `}
     >
-      <span className={`${active ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
+      <span className={`${active ? 'scale-110 text-[#D4AF37]' : 'group-hover:scale-110 group-hover:text-[#B6718E]'} transition-all duration-300`}>
         {icon}
       </span>
-      <span className="text-sm font-bold tracking-tight">{label}</span>
+      <span className="text-sm font-bold tracking-widest uppercase">{label}</span>
       {active && (
-        <motion.div 
+        <motion.div
           layoutId="nav-active"
-          className="absolute right-4 w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+          className="absolute right-4 w-1.5 h-1.5 bg-[#D4AF37] rounded-full shadow-[0_0_8px_rgba(212,175,55,0.8)]"
         />
       )}
     </button>
@@ -354,7 +354,7 @@ function NavButton({ active, onClick, icon, label }: { active: boolean, onClick:
 
 function BrandTab({ brand, setBrand }: { brand: BrandIdentity, setBrand: (b: BrandIdentity) => void, key?: string }) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.02 }}
@@ -362,7 +362,7 @@ function BrandTab({ brand, setBrand }: { brand: BrandIdentity, setBrand: (b: Bra
     >
       <header className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="px-3 py-1 bg-violet-500/10 border border-violet-500/20 rounded-full text-[10px] font-bold text-violet-400 uppercase tracking-widest">Brand Pulse</div>
+          <div className="px-3 py-1 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-full text-[10px] font-bold text-[#D4AF37] uppercase tracking-widest">Brand Pulse</div>
         </div>
         <h2 className="text-5xl font-black tracking-tighter text-white leading-none">Your Brand DNA</h2>
         <p className="text-lg text-slate-400 max-w-2xl">We've decoded your brand's mission, tone, and audience. This is the foundation for every ad we engineer.</p>
@@ -372,48 +372,48 @@ function BrandTab({ brand, setBrand }: { brand: BrandIdentity, setBrand: (b: Bra
         {/* Mission & Tone */}
         <div className="lg:col-span-2 space-y-8">
           <div className="glass-card p-10 rounded-[3rem] space-y-6 relative overflow-hidden group">
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl group-hover:bg-violet-600/20 transition-colors duration-500" />
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#B6718E]/10 rounded-full blur-3xl group-hover:bg-[#B6718E]/20 transition-colors duration-500" />
             <div className="space-y-2">
-              <h3 className="text-sm font-bold text-violet-400 uppercase tracking-widest">Mission Statement</h3>
+              <h3 className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest">Brand Position</h3>
               <p className="text-2xl font-bold text-white leading-tight italic">"{brand.mission || 'To simplify event planning and create unforgettable memories.'}"</p>
             </div>
             <div className="pt-6 border-t border-white/5 space-y-2">
-              <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-widest">Brand Tone</h3>
-              <textarea 
-                className="w-full h-24 p-4 rounded-2xl bg-white/5 border border-white/10 text-slate-300 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-violet-500/20 transition-all"
+              <h3 className="text-xs font-bold text-[#B6718E] uppercase tracking-widest">Brand Tone & Voice</h3>
+              <textarea
+                className="w-full h-24 p-4 rounded-2xl bg-[#0A0510]/50 border border-white/10 text-slate-300 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-[#D4AF37]/50 transition-all font-serif italic"
                 value={brand.tone}
-                onChange={e => setBrand({...brand, tone: e.target.value})}
+                onChange={e => setBrand({ ...brand, tone: e.target.value })}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="glass-card p-8 rounded-[2.5rem] space-y-4">
-              <h3 className="text-sm font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
-                <Target className="w-4 h-4" /> Target Audience
+            <div className="glass-card p-8 rounded-[2.5rem] space-y-4 border border-white/5">
+              <h3 className="text-xs font-bold text-white/50 uppercase tracking-widest flex items-center gap-2">
+                <Target className="w-4 h-4 text-[#D4AF37]" /> Target Audience
               </h3>
               <div className="flex flex-wrap gap-2">
                 {brand.audience?.map((a, i) => (
-                  <span key={i} className="px-4 py-2 bg-white/5 rounded-2xl text-sm font-medium text-slate-300 border border-white/5 flex items-center gap-2 group/tag">
+                  <span key={i} className="px-4 py-2 bg-[#0A0510] rounded-2xl text-[10px] font-bold tracking-widest uppercase text-slate-300 border border-white/10 flex items-center gap-2 group/tag">
                     {a}
-                    <Trash2 className="w-3 h-3 cursor-pointer opacity-0 group-hover/tag:opacity-50 hover:!opacity-100 transition-opacity" onClick={() => setBrand({...brand, audience: brand.audience.filter((_, idx) => idx !== i)})} />
+                    <Trash2 className="w-3 h-3 cursor-pointer opacity-0 group-hover/tag:opacity-50 hover:!opacity-100 transition-opacity" onClick={() => setBrand({ ...brand, audience: brand.audience.filter((_, idx) => idx !== i) })} />
                   </span>
                 ))}
-                <button className="px-4 py-2 border border-dashed border-white/10 rounded-2xl text-sm text-slate-500 hover:border-violet-500 hover:text-violet-500 transition-all">
-                  + Add Segment
+                <button className="px-4 py-2 border border-dashed border-white/10 rounded-2xl text-[10px] uppercase tracking-widest font-bold text-slate-500 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all">
+                  + Add
                 </button>
               </div>
             </div>
-            <div className="glass-card p-8 rounded-[2.5rem] space-y-4">
-              <h3 className="text-sm font-bold text-rose-400 uppercase tracking-widest flex items-center gap-2">
-                <Sparkles className="w-4 h-4" /> Value Propositions
+            <div className="glass-card p-8 rounded-[2.5rem] space-y-4 border border-white/5">
+              <h3 className="text-xs font-bold text-white/50 uppercase tracking-widest flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#B6718E]" /> Psychological Triggers
               </h3>
               <div className="space-y-3">
                 {brand.valueProps?.map((v, i) => (
-                  <div key={i} className="flex items-start gap-3 group/vp">
-                    <div className="mt-1.5 w-1.5 h-1.5 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
-                    <p className="text-sm text-slate-300 leading-snug flex-1">{v}</p>
-                    <Trash2 className="w-3 h-3 cursor-pointer opacity-0 group-hover/vp:opacity-50 hover:!opacity-100 transition-opacity mt-1" onClick={() => setBrand({...brand, valueProps: brand.valueProps.filter((_, idx) => idx !== i)})} />
+                  <div key={i} className="flex items-start gap-3 group/vp p-3 bg-[#0A0510]/50 rounded-xl border border-white/5">
+                    <div className="mt-1 w-1.5 h-1.5 bg-[#B6718E] rounded-full shadow-[0_0_8px_rgba(182,113,142,0.6)]" />
+                    <p className="text-xs font-medium text-slate-300 leading-relaxed flex-1">{v}</p>
+                    <Trash2 className="w-3 h-3 cursor-pointer opacity-0 group-hover/vp:opacity-50 hover:!opacity-100 transition-opacity mt-0.5" onClick={() => setBrand({ ...brand, valueProps: brand.valueProps.filter((_, idx) => idx !== i) })} />
                   </div>
                 ))}
               </div>
@@ -430,7 +430,7 @@ function BrandTab({ brand, setBrand }: { brand: BrandIdentity, setBrand: (b: Bra
                 <div key={i} className="space-y-2 group/color relative">
                   <div className="h-20 rounded-2xl shadow-inner border border-white/10" style={{ backgroundColor: c }} />
                   <p className="text-[10px] font-mono text-center text-slate-500 uppercase">{c}</p>
-                  <button className="absolute top-2 right-2 p-1.5 bg-black/50 rounded-lg opacity-0 group-hover/color:opacity-100 transition-opacity" onClick={() => setBrand({...brand, colors: brand.colors.filter((_, idx) => idx !== i)})}>
+                  <button className="absolute top-2 right-2 p-1.5 bg-black/50 rounded-lg opacity-0 group-hover/color:opacity-100 transition-opacity" onClick={() => setBrand({ ...brand, colors: brand.colors.filter((_, idx) => idx !== i) })}>
                     <Trash2 className="w-3 h-3 text-white" />
                   </button>
                 </div>
@@ -442,35 +442,15 @@ function BrandTab({ brand, setBrand }: { brand: BrandIdentity, setBrand: (b: Bra
           </div>
 
           <div className="glass-card p-8 rounded-[2.5rem] space-y-4">
-            <h3 className="text-sm font-bold text-indigo-400 uppercase tracking-widest">Keywords</h3>
+            <h3 className="text-sm font-bold text-white/50 uppercase tracking-widest">Brand Modifiers</h3>
             <div className="flex flex-wrap gap-2">
               {brand.keywords?.map((k, i) => (
-                <span key={i} className="px-3 py-1.5 bg-indigo-500/10 text-indigo-300 rounded-xl text-xs font-bold border border-indigo-500/20 flex items-center gap-2 group/key">
-                  #{k}
-                  <Trash2 className="w-3 h-3 cursor-pointer opacity-0 group-hover/key:opacity-50 hover:!opacity-100 transition-opacity" onClick={() => setBrand({...brand, keywords: brand.keywords.filter((_, idx) => idx !== i)})} />
+                <span key={i} className="px-3 py-1.5 bg-[#D4AF37]/5 text-[#D4AF37] rounded-xl text-[10px] uppercase font-bold tracking-widest border border-[#D4AF37]/20 flex items-center gap-2 group/key">
+                  {k}
+                  <Trash2 className="w-3 h-3 cursor-pointer opacity-0 group-hover/key:opacity-50 hover:!opacity-100 transition-opacity" onClick={() => setBrand({ ...brand, keywords: brand.keywords.filter((_, idx) => idx !== i) })} />
                 </span>
               ))}
             </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-        {/* Value Props */}
-        <div className="glass-card p-6 rounded-3xl shadow-sm space-y-4">
-          <div className="flex items-center gap-2 text-white font-semibold">
-            <Target className="w-5 h-5 text-violet-500" />
-            Value Propositions
-          </div>
-          <div className="space-y-2">
-            {brand.valueProps?.map((prop, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl text-sm text-slate-300">
-                <Check className="w-4 h-4 text-emerald-500" />
-                {prop}
-              </div>
-            ))}
           </div>
         </div>
       </div>
@@ -493,7 +473,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
     setIsEditing(asset.id);
     try {
       const newUrl = await editImagenImage(asset.url, editPrompt);
-      
+
       // Save new asset
       const response = await fetch('/api/assets/upload', {
         method: 'POST',
@@ -501,7 +481,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
         body: JSON.stringify({ businessId: 'events-made-easy', assets: [{ url: newUrl, type: 'image' }] })
       });
       const [newAsset] = await response.json();
-      
+
       // Tag new asset
       const { tags, ranking } = await tagAsset(newUrl);
       await fetch('/api/assets/update-tags', {
@@ -527,7 +507,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
     setIsGeneratingAI(true);
     try {
       const imageUrls = await generateImagenImages(selectedPrompt.prompt, 2); // Generate 2 for now
-      
+
       const assetData = imageUrls.map(url => ({
         url,
         type: 'image' as const
@@ -551,8 +531,8 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ assetId: asset.id, tags, ranking })
           });
-          
-          setAssets(prev => prev.map(a => 
+
+          setAssets(prev => prev.map(a =>
             a.id === asset.id ? { ...a, tags, ranking } : a
           ));
         } catch (err) {
@@ -579,7 +559,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
     setIsGeneratingVideo(true);
     try {
       const videoUrl = await generateVeoVideo(VEO_PROMPT);
-      
+
       const assetData = [{
         url: videoUrl,
         type: 'video' as const
@@ -618,9 +598,9 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
       return new Promise<{ url: string, type: 'image' | 'video' }>((resolve) => {
         const reader = new FileReader();
         reader.onload = (event) => {
-          resolve({ 
-            url: event.target?.result as string, 
-            type: file.type.startsWith('video') ? 'video' : 'image' 
+          resolve({
+            url: event.target?.result as string,
+            type: file.type.startsWith('video') ? 'video' : 'image'
           });
         };
         reader.readAsDataURL(file);
@@ -628,7 +608,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
     });
 
     const assetData = await Promise.all(filePromises);
-    
+
     try {
       const response = await fetch('/api/assets/upload', {
         method: 'POST',
@@ -648,8 +628,8 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ assetId: asset.id, tags, ranking })
           });
-          
-          setAssets(prev => prev.map(a => 
+
+          setAssets(prev => prev.map(a =>
             a.id === asset.id ? { ...a, tags, ranking } : a
           ));
         } catch (err) {
@@ -668,8 +648,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
   };
 
   return (
-  return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.02 }}
@@ -677,13 +656,13 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
     >
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
-          <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] font-bold text-emerald-400 uppercase tracking-widest w-fit">Media Lab</div>
+          <div className="px-3 py-1 bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full text-[10px] font-bold text-[#D4AF37] uppercase tracking-widest w-fit">Media Lab</div>
           <h2 className="text-5xl font-black tracking-tighter text-white leading-none">Asset Library</h2>
           <p className="text-lg text-slate-400">Upload your own or engineer new ones with AI.</p>
         </div>
         <div className="flex items-center gap-4">
           <input type="file" multiple accept="image/*,video/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
-          <button 
+          <button
             onClick={() => fileInputRef.current?.click()}
             className="px-8 py-4 bg-white text-black rounded-2xl font-bold flex items-center gap-3 hover:bg-slate-200 transition-all shadow-xl shadow-white/5"
           >
@@ -694,56 +673,56 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
 
       {/* AI Generation Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="glass-card p-8 rounded-[3rem] space-y-6 relative overflow-hidden group">
-          <div className="absolute -top-12 -right-12 w-48 h-48 bg-violet-600/10 rounded-full blur-3xl group-hover:bg-violet-600/20 transition-colors" />
+        <div className="glass-card p-8 rounded-[3rem] space-y-6 relative overflow-hidden group border border-white/5">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#B6718E]/10 rounded-full blur-3xl group-hover:bg-[#B6718E]/20 transition-colors" />
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-white flex items-center gap-3">
-              <Sparkles className="w-6 h-6 text-violet-500" /> AI Photo Studio
+              <Sparkles className="w-6 h-6 text-[#B6718E]" /> AI Photo Studio
             </h3>
             <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">Imagen 4.0</div>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {IMAGEN_PROMPTS.map(p => (
-              <button 
+              <button
                 key={p.id}
                 onClick={() => setSelectedPromptId(p.id)}
-                className={`p-4 rounded-2xl border transition-all text-left space-y-1 ${selectedPromptId === p.id ? 'bg-violet-600 border-violet-500 text-white shadow-lg shadow-violet-500/20' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'}`}
+                className={`p-4 rounded-2xl border transition-all text-left space-y-1 ${selectedPromptId === p.id ? 'bg-[#0A0510] border-[#B6718E] text-white shadow-lg shadow-[#B6718E]/20' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20'}`}
               >
                 <p className="text-xs font-bold uppercase tracking-wider">{p.label}</p>
                 <p className="text-[10px] opacity-70 leading-tight">{p.description}</p>
               </button>
             ))}
           </div>
-          <button 
+          <button
             onClick={handleGenerateAIImages}
             disabled={isGeneratingAI}
-            className="w-full py-4 bg-violet-600 hover:bg-violet-700 disabled:bg-white/5 disabled:text-slate-600 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 bg-[#0A0510] hover:bg-[#1A0B2E] border border-[#B6718E]/30 disabled:bg-white/5 disabled:border-transparent disabled:text-slate-600 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2"
           >
             {isGeneratingAI ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full" /> : <Sparkles className="w-5 h-5" />}
             {isGeneratingAI ? 'Engineering Photos...' : 'Generate AI Photography'}
           </button>
         </div>
 
-        <div className="glass-card p-8 rounded-[3rem] space-y-6 relative overflow-hidden group">
-          <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-600/10 rounded-full blur-3xl group-hover:bg-emerald-600/20 transition-colors" />
+        <div className="glass-card p-8 rounded-[3rem] space-y-6 relative overflow-hidden group border border-white/5">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-3xl group-hover:bg-[#D4AF37]/20 transition-colors" />
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-white flex items-center gap-3">
-              <VideoIcon className="w-6 h-6 text-emerald-500" /> AI Video Engine
+              <VideoIcon className="w-6 h-6 text-[#D4AF37]" /> AI Video Engine
             </h3>
             <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">Veo 3.1</div>
           </div>
-          <div className="p-5 bg-white/5 rounded-2xl border border-white/5 space-y-3">
+          <div className="p-5 bg-[#0A0510]/50 rounded-2xl border border-white/5 space-y-3">
             <p className="text-sm text-slate-300 leading-relaxed">Cinematic 9:16 vertical ads engineered for FOMO and status elevation. Perfect for Reels & TikTok.</p>
             <div className="flex gap-2">
-              <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[9px] font-bold rounded-md uppercase tracking-widest">1080p</span>
-              <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[9px] font-bold rounded-md uppercase tracking-widest">9:16</span>
-              <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[9px] font-bold rounded-md uppercase tracking-widest">Cinematic</span>
+              <span className="px-2 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-[9px] font-bold rounded-md uppercase tracking-widest">1080p</span>
+              <span className="px-2 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-[9px] font-bold rounded-md uppercase tracking-widest">9:16</span>
+              <span className="px-2 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-[9px] font-bold rounded-md uppercase tracking-widest">Cinematic</span>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleGenerateVideo}
             disabled={isGeneratingVideo}
-            className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-white/5 disabled:text-slate-600 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 bg-[#0A0510] hover:bg-[#1A0B2E] border border-[#D4AF37]/30 disabled:bg-white/5 disabled:border-transparent disabled:text-slate-600 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2"
           >
             {isGeneratingVideo ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full" /> : <VideoIcon className="w-5 h-5" />}
             {isGeneratingVideo ? 'Engineering Video...' : 'Generate Cinematic Ad'}
@@ -762,12 +741,12 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
             </div>
           )}
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {assets.map(asset => (
-            <motion.div 
+            <motion.div
               layout
-              key={asset.id} 
+              key={asset.id}
               className="group relative aspect-[3/4] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 shadow-sm"
             >
               {asset.type === 'video' ? (
@@ -775,7 +754,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
               ) : (
                 <img src={asset.url} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               )}
-              
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end gap-3">
                 <div className="flex flex-wrap gap-1">
                   {asset.tags?.map(t => (
@@ -785,19 +764,19 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
                 <div className="flex items-center justify-between">
                   <div className="flex gap-2">
                     {asset.type === 'image' && (
-                      <button 
+                      <button
                         onClick={() => handleEditImage(asset)}
                         disabled={isEditing === asset.id}
-                        className="p-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl transition-all shadow-lg shadow-violet-500/20"
+                        className="p-2 bg-[#0A0510] hover:bg-[#1A0B2E] border border-[#B6718E]/30 text-white rounded-xl transition-all shadow-lg"
                       >
-                        {isEditing === asset.id ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full" /> : <Palette className="w-4 h-4" />}
+                        {isEditing === asset.id ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full" /> : <Palette className="w-4 h-4 text-[#B6718E]" />}
                       </button>
                     )}
                     <button className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all backdrop-blur-md">
                       <ExternalLink className="w-4 h-4" />
                     </button>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setAssets(assets.filter(a => a.id !== asset.id))}
                     className="p-2 bg-rose-500/20 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all"
                   >
@@ -805,7 +784,7 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
                   </button>
                 </div>
               </div>
-              
+
               {asset.ranking && asset.ranking > 0 && (
                 <div className="absolute top-3 right-3 px-2 py-1 bg-amber-500 text-black text-[10px] font-black rounded-lg shadow-lg">
                   {asset.ranking}/10
@@ -839,9 +818,9 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
   const [progress, setProgress] = useState({ current: 0, total: 0 });
 
   const handlePlatformToggle = (platform: Platform) => {
-    setSelectedPlatforms(prev => 
-      prev.includes(platform) 
-        ? prev.filter(p => p !== platform) 
+    setSelectedPlatforms(prev =>
+      prev.includes(platform)
+        ? prev.filter(p => p !== platform)
         : [...prev, platform]
     );
   };
@@ -849,7 +828,7 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
   const handleGenerate = async () => {
     if (selectedAssets.length === 0 || selectedPlatforms.length === 0) return;
     setIsGenerating(true);
-    
+
     try {
       const tasks: any[] = [];
       const variationsPerAsset = 2; // Reduced from 3 to 2 for speed
@@ -877,7 +856,7 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
         const results = await Promise.all(batch.map(async (task) => {
           try {
             const content = await generateCreativeContent(task.platform, campaign.goal, campaign.offer, campaign.cta, brand);
-            
+
             let aspectRatio = '1:1';
             if (task.platform === 'instagram_story' || task.platform === 'tiktok') aspectRatio = '9:16';
             if (task.platform === 'web_banner') aspectRatio = '16:9';
@@ -930,7 +909,7 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.02 }}
@@ -957,7 +936,7 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
               {assets?.map(asset => (
-                <button 
+                <button
                   key={asset.id}
                   onClick={() => selectedAssets.includes(asset.id) ? setSelectedAssets(selectedAssets.filter(id => id !== asset.id)) : setSelectedAssets([...selectedAssets, asset.id])}
                   className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all group ${selectedAssets.includes(asset.id) ? 'border-violet-500 ring-4 ring-violet-500/20' : 'border-white/5 hover:border-white/20'}`}
@@ -987,9 +966,9 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="space-y-3">
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Primary Goal</label>
-                <select 
+                <select
                   value={campaign.goal}
-                  onChange={e => setCampaign({...campaign, goal: e.target.value})}
+                  onChange={e => setCampaign({ ...campaign, goal: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white font-bold outline-none focus:ring-2 focus:ring-violet-500 transition-all appearance-none"
                 >
                   <option className="bg-slate-900">Brand Awareness</option>
@@ -1000,19 +979,19 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
               </div>
               <div className="space-y-3">
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Core Offer</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={campaign.offer}
-                  onChange={e => setCampaign({...campaign, offer: e.target.value})}
+                  onChange={e => setCampaign({ ...campaign, offer: e.target.value })}
                   placeholder="e.g. 20% Off"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white font-bold outline-none focus:ring-2 focus:ring-violet-500 transition-all placeholder:text-slate-600"
                 />
               </div>
               <div className="space-y-3">
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Call to Action</label>
-                <select 
+                <select
                   value={campaign.cta}
-                  onChange={e => setCampaign({...campaign, cta: e.target.value})}
+                  onChange={e => setCampaign({ ...campaign, cta: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white font-bold outline-none focus:ring-2 focus:ring-violet-500 transition-all appearance-none"
                 >
                   <option className="bg-slate-900">Book Now</option>
@@ -1040,7 +1019,7 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
                 { id: 'tiktok', label: 'TikTok', icon: <Smartphone className="w-4 h-4" /> },
                 { id: 'web_banner', label: 'Website Banner', icon: <ExternalLink className="w-4 h-4" /> }
               ].map(p => (
-                <button 
+                <button
                   key={p.id}
                   onClick={() => handlePlatformToggle(p.id as Platform)}
                   className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all border ${selectedPlatforms.includes(p.id as Platform) ? 'bg-violet-600/10 border-violet-500 text-white' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}`}
@@ -1056,7 +1035,7 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
               ))}
             </div>
 
-            <button 
+            <button
               disabled={selectedAssets.length === 0 || selectedPlatforms.length === 0 || isGenerating}
               onClick={handleGenerate}
               className="w-full py-6 bg-violet-600 hover:bg-violet-700 disabled:bg-white/5 disabled:text-slate-600 text-white font-black rounded-[2rem] shadow-2xl shadow-violet-500/40 transition-all flex flex-col items-center justify-center gap-2 group"
@@ -1070,7 +1049,7 @@ function CreateTab({ brand, assets, creatives, setCreatives }: { brand: BrandIde
               ) : (
                 <>
                   <div className="flex items-center gap-3">
-                    <Sparkles className="w-6 h-6 group-hover:scale-125 transition-transform" /> 
+                    <Sparkles className="w-6 h-6 group-hover:scale-125 transition-transform" />
                     <span className="text-lg uppercase tracking-tighter">Engineer Campaign</span>
                   </div>
                   <span className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Powered by Gemini 1.5 Pro</span>
@@ -1088,11 +1067,11 @@ function PlatformToggle({ label, checked, onChange }: { label: string, checked: 
   return (
     <label className="flex items-center justify-between p-3 bg-white/5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
       <span className="text-sm font-medium text-slate-300">{label}</span>
-      <input 
-        type="checkbox" 
-        checked={checked} 
+      <input
+        type="checkbox"
+        checked={checked}
         onChange={onChange}
-        className="w-5 h-5 rounded-md border-white/10 bg-transparent text-violet-600 focus:ring-violet-500" 
+        className="w-5 h-5 rounded-md border-white/10 bg-transparent text-violet-600 focus:ring-violet-500"
       />
     </label>
   );
@@ -1126,7 +1105,7 @@ function LibraryTab({ creatives, schedule, setSchedule }: { creatives: Creative[
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 1.02 }}
@@ -1140,13 +1119,13 @@ function LibraryTab({ creatives, schedule, setSchedule }: { creatives: Creative[
         </div>
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 shadow-sm">
-            <button 
+            <button
               onClick={() => setView('grid')}
               className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${view === 'grid' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'text-slate-400 hover:text-white'}`}
             >
               <Library className="w-4 h-4 inline mr-2" /> Library
             </button>
-            <button 
+            <button
               onClick={() => setView('calendar')}
               className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${view === 'calendar' ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'text-slate-400 hover:text-white'}`}
             >
@@ -1172,7 +1151,7 @@ function LibraryTab({ creatives, schedule, setSchedule }: { creatives: Creative[
                     </span>
                   )}
                 </div>
-                
+
                 {/* Ad Overlay Simulation */}
                 <div className="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent text-white opacity-100 group-hover:opacity-0 transition-opacity duration-300">
                   <div className="space-y-2">
@@ -1210,7 +1189,7 @@ function LibraryTab({ creatives, schedule, setSchedule }: { creatives: Creative[
                 <button className="text-xs font-bold text-violet-400 hover:text-violet-300 flex items-center gap-1">
                   <Download className="w-3 h-3" /> Export
                 </button>
-                <button 
+                <button
                   onClick={() => handleSchedule(creative.id)}
                   className="text-xs font-bold text-slate-500 hover:text-slate-400 flex items-center gap-1"
                 >
@@ -1240,25 +1219,25 @@ function LibraryTab({ creatives, schedule, setSchedule }: { creatives: Creative[
               </div>
               <div className="flex flex-wrap gap-3">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest w-full mb-1">Export Platform CSVs</p>
-                <button 
+                <button
                   onClick={() => handleExportCSV('instagram_feed')}
                   className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold border border-white/10 transition-all flex items-center gap-2"
                 >
                   <Instagram className="w-3.5 h-3.5" /> Instagram
                 </button>
-                <button 
+                <button
                   onClick={() => handleExportCSV('tiktok')}
                   className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold border border-white/10 transition-all flex items-center gap-2"
                 >
                   <Smartphone className="w-3.5 h-3.5" /> TikTok
                 </button>
-                <button 
+                <button
                   onClick={() => handleExportCSV('facebook_feed')}
                   className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold border border-white/10 transition-all flex items-center gap-2"
                 >
                   <Facebook className="w-3.5 h-3.5" /> Facebook
                 </button>
-                <button 
+                <button
                   onClick={() => handleExportCSV('all')}
                   className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
                 >
@@ -1267,37 +1246,37 @@ function LibraryTab({ creatives, schedule, setSchedule }: { creatives: Creative[
               </div>
             </div>
             <div className="grid grid-cols-7 gap-4">
-            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, idx) => {
-              const dayItems = schedule.filter(item => {
-                const date = new Date(item.scheduledAt);
-                // Simple mapping for demo: Mon=1, Tue=2... Sun=0
-                const dayNum = date.getDay();
-                const targetDayNum = (idx + 1) % 7;
-                return dayNum === targetDayNum;
-              });
+              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, idx) => {
+                const dayItems = schedule.filter(item => {
+                  const date = new Date(item.scheduledAt);
+                  // Simple mapping for demo: Mon=1, Tue=2... Sun=0
+                  const dayNum = date.getDay();
+                  const targetDayNum = (idx + 1) % 7;
+                  return dayNum === targetDayNum;
+                });
 
-              return (
-                <div key={day} className="space-y-4">
-                  <div className="text-center text-xs font-bold text-slate-500 uppercase tracking-widest">{day}</div>
-                  <div className="min-h-[200px] bg-white/5 rounded-2xl border border-dashed border-white/10 p-2 flex flex-col gap-2">
-                    {dayItems.map(item => {
-                      const creative = creatives.find(c => c.id === item.creativeId);
-                      const time = new Date(item.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                      return (
-                        <div key={item.id} className="p-2 bg-slate-800 rounded-xl shadow-sm border border-white/5 text-[10px] text-white">
-                          <div className="font-bold text-violet-400 mb-1">{time}</div>
-                          <div className="truncate opacity-70">{item.platform.replace('_', ' ').toUpperCase()}: {creative?.headline}</div>
-                        </div>
-                      );
-                    })}
+                return (
+                  <div key={day} className="space-y-4">
+                    <div className="text-center text-xs font-bold text-slate-500 uppercase tracking-widest">{day}</div>
+                    <div className="min-h-[200px] bg-white/5 rounded-2xl border border-dashed border-white/10 p-2 flex flex-col gap-2">
+                      {dayItems.map(item => {
+                        const creative = creatives.find(c => c.id === item.creativeId);
+                        const time = new Date(item.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        return (
+                          <div key={item.id} className="p-2 bg-slate-800 rounded-xl shadow-sm border border-white/5 text-[10px] text-white">
+                            <div className="font-bold text-violet-400 mb-1">{time}</div>
+                            <div className="truncate opacity-70">{item.platform.replace('_', ' ').toUpperCase()}: {creative?.headline}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
     </motion.div>
   );
 }
-
