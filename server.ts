@@ -75,87 +75,87 @@ async function startServer() {
 
   app.use(express.json({ limit: '50mb' }));
 
-// --- AI Generation Routes ---
+  // --- AI Generation Routes ---
 
-// 1. Brand Identity Extraction
-app.post('/api/ai/brand-identity', async (req, res) => {
-  const { name, website } = req.body;
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Extract brand identity for ${name} from website: ${website}. 
+  // 1. Brand Identity Extraction
+  app.post('/api/ai/brand-identity', async (req, res) => {
+    const { name, website } = req.body;
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Extract brand identity for ${name} from website: ${website}. 
       Return JSON with: mission, tone, audience (array), valueProps (array), keywords (array), colors (array of hex), constraints (array).`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            mission: { type: Type.STRING },
-            tone: { type: Type.STRING },
-            audience: { type: Type.ARRAY, items: { type: Type.STRING } },
-            valueProps: { type: Type.ARRAY, items: { type: Type.STRING } },
-            keywords: { type: Type.ARRAY, items: { type: Type.STRING } },
-            colors: { type: Type.ARRAY, items: { type: Type.STRING } },
-            constraints: { type: Type.ARRAY, items: { type: Type.STRING } }
-          },
-          required: ["mission", "tone", "audience", "valueProps", "keywords", "colors", "constraints"]
-        }
-      }
-    });
-    res.json(JSON.parse(response.text));
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'AI Brand extraction failed' });
-  }
-});
-
-// 2. Asset Tagging
-app.post('/api/ai/tag-asset', async (req, res) => {
-  const { assetUrl } = req.body;
-  try {
-    // If it's a data URL, extract base64. If it's a GCS URL, we might need to fetch it or use a different part type.
-    // For simplicity, assuming the frontend sends base64 or we fetch the GCS URL.
-    let base64Data = '';
-    if (assetUrl.startsWith('data:')) {
-      base64Data = assetUrl.split(',')[1];
-    } else {
-      // Fetch from GCS
-      const response = await fetch(assetUrl);
-      const buffer = await response.arrayBuffer();
-      base64Data = Buffer.from(buffer).toString('base64');
-    }
-
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: [
-        { text: "Tag this image for an ad campaign. Return JSON with: tags (array), ranking (1-10 based on visual appeal)." },
-        { inlineData: { mimeType: "image/jpeg", data: base64Data } }
-      ],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-            ranking: { type: Type.INTEGER }
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              mission: { type: Type.STRING },
+              tone: { type: Type.STRING },
+              audience: { type: Type.ARRAY, items: { type: Type.STRING } },
+              valueProps: { type: Type.ARRAY, items: { type: Type.STRING } },
+              keywords: { type: Type.ARRAY, items: { type: Type.STRING } },
+              colors: { type: Type.ARRAY, items: { type: Type.STRING } },
+              constraints: { type: Type.ARRAY, items: { type: Type.STRING } }
+            },
+            required: ["mission", "tone", "audience", "valueProps", "keywords", "colors", "constraints"]
           }
         }
-      }
-    });
-    res.json(JSON.parse(response.text));
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'AI Tagging failed' });
-  }
-});
+      });
+      res.json(JSON.parse(response.text));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'AI Brand extraction failed' });
+    }
+  });
 
-// 3. Creative Content Generation
-app.post('/api/ai/generate-creative', async (req, res) => {
-  const { platform, goal, offer, cta, brand } = req.body;
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Generate an emotionally disruptive, psychologically compelling ad creative for ${platform}. 
+  // 2. Asset Tagging
+  app.post('/api/ai/tag-asset', async (req, res) => {
+    const { assetUrl } = req.body;
+    try {
+      // If it's a data URL, extract base64. If it's a GCS URL, we might need to fetch it or use a different part type.
+      // For simplicity, assuming the frontend sends base64 or we fetch the GCS URL.
+      let base64Data = '';
+      if (assetUrl.startsWith('data:')) {
+        base64Data = assetUrl.split(',')[1];
+      } else {
+        // Fetch from GCS
+        const response = await fetch(assetUrl);
+        const buffer = await response.arrayBuffer();
+        base64Data = Buffer.from(buffer).toString('base64');
+      }
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: [
+          { text: "Tag this image for an ad campaign. Return JSON with: tags (array), ranking (1-10 based on visual appeal)." },
+          { inlineData: { mimeType: "image/jpeg", data: base64Data } }
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+              ranking: { type: Type.INTEGER }
+            }
+          }
+        }
+      });
+      res.json(JSON.parse(response.text));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'AI Tagging failed' });
+    }
+  });
+
+  // 3. Creative Content Generation
+  app.post('/api/ai/generate-creative', async (req, res) => {
+    const { platform, goal, offer, cta, brand } = req.body;
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Generate an emotionally disruptive, psychologically compelling ad creative for ${platform}. 
       Goal: ${goal}. Offer: ${offer}. CTA: ${cta}. 
       Brand Identity: ${JSON.stringify(brand)}.
       
@@ -171,134 +171,134 @@ app.post('/api/ai/generate-creative', async (req, res) => {
       - Favor high contrast, dramatic lighting, bold on-screen text, and attention-grabbing compositions.
       
       Return JSON with: hook, coreMessage, visualDirection, emotionalTrigger, conversionMechanism, headline, body, hashtags (array).`,
-      config: {
-        systemInstruction: `You are a world-class performance marketer and psychological ad engineer. 
+        config: {
+          systemInstruction: `You are a world-class performance marketer and psychological ad engineer. 
 Your job is to create emotionally disruptive, psychologically compelling ad concepts designed to stop scrolling and trigger strong reactions such as outrage, fear of missing out, status anxiety, curiosity, or social comparison.
 
 Do NOT create generic ads.
 Do NOT use basic marketing language.
 Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.”`,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            hook: { type: Type.STRING },
-            coreMessage: { type: Type.STRING },
-            visualDirection: { type: Type.STRING },
-            emotionalTrigger: { type: Type.STRING },
-            conversionMechanism: { type: Type.STRING },
-            headline: { type: Type.STRING },
-            body: { type: Type.STRING },
-            hashtags: { type: Type.ARRAY, items: { type: Type.STRING } }
-          },
-          required: ["hook", "coreMessage", "visualDirection", "emotionalTrigger", "conversionMechanism", "headline", "body", "hashtags"]
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              hook: { type: Type.STRING },
+              coreMessage: { type: Type.STRING },
+              visualDirection: { type: Type.STRING },
+              emotionalTrigger: { type: Type.STRING },
+              conversionMechanism: { type: Type.STRING },
+              headline: { type: Type.STRING },
+              body: { type: Type.STRING },
+              hashtags: { type: Type.ARRAY, items: { type: Type.STRING } }
+            },
+            required: ["hook", "coreMessage", "visualDirection", "emotionalTrigger", "conversionMechanism", "headline", "body", "hashtags"]
+          }
+        }
+      });
+      res.json(JSON.parse(response.text));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'AI Creative generation failed' });
+    }
+  });
+
+  // 4. Imagen Image Generation
+  app.post('/api/ai/generate-image', async (req, res) => {
+    const { prompt, count } = req.body;
+    try {
+      const response = await ai.models.generateImages({
+        model: 'imagen-4.0-generate-001',
+        prompt: prompt,
+        config: {
+          numberOfImages: count || 1,
+          outputMimeType: 'image/jpeg',
+          aspectRatio: '1:1',
+        },
+      });
+
+      const imageUrls = response.generatedImages.map(img => `data:image/jpeg;base64,${img.image.imageBytes}`);
+      res.json({ images: imageUrls });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'AI Image generation failed' });
+    }
+  });
+
+  // 5. Imagen Image Editing
+  app.post('/api/ai/edit-image', async (req, res) => {
+    const { base64Image, prompt } = req.body;
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image',
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                data: base64Image.split(',')[1],
+                mimeType: 'image/jpeg',
+              },
+            },
+            {
+              text: prompt,
+            },
+          ],
+        },
+      });
+
+      for (const part of response.candidates?.[0]?.content?.parts || []) {
+        if (part.inlineData) {
+          return res.json({ image: `data:image/png;base64,${part.inlineData.data}` });
         }
       }
-    });
-    res.json(JSON.parse(response.text));
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'AI Creative generation failed' });
-  }
-});
-
-// 4. Imagen Image Generation
-app.post('/api/ai/generate-image', async (req, res) => {
-  const { prompt, count } = req.body;
-  try {
-    const response = await ai.models.generateImages({
-      model: 'imagen-4.0-generate-001',
-      prompt: prompt,
-      config: {
-        numberOfImages: count || 1,
-        outputMimeType: 'image/jpeg',
-        aspectRatio: '1:1',
-      },
-    });
-
-    const imageUrls = response.generatedImages.map(img => `data:image/jpeg;base64,${img.image.imageBytes}`);
-    res.json({ images: imageUrls });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'AI Image generation failed' });
-  }
-});
-
-// 5. Imagen Image Editing
-app.post('/api/ai/edit-image', async (req, res) => {
-  const { base64Image, prompt } = req.body;
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              data: base64Image.split(',')[1],
-              mimeType: 'image/jpeg',
-            },
-          },
-          {
-            text: prompt,
-          },
-        ],
-      },
-    });
-
-    for (const part of response.candidates?.[0]?.content?.parts || []) {
-      if (part.inlineData) {
-        return res.json({ image: `data:image/png;base64,${part.inlineData.data}` });
-      }
+      throw new Error("No image returned from AI");
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'AI Image editing failed' });
     }
-    throw new Error("No image returned from AI");
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'AI Image editing failed' });
-  }
-});
+  });
 
-// 6. Veo Video Generation
-app.post('/api/ai/generate-video', async (req, res) => {
-  const { prompt } = req.body;
-  try {
-    let operation = await ai.models.generateVideos({
-      model: 'veo-3.1-fast-generate-preview',
-      prompt: prompt,
-      config: {
-        numberOfVideos: 1,
-        resolution: '1080p',
-        aspectRatio: '9:16'
+  // 6. Veo Video Generation
+  app.post('/api/ai/generate-video', async (req, res) => {
+    const { prompt } = req.body;
+    try {
+      let operation = await ai.models.generateVideos({
+        model: 'veo-3.1-fast-generate-preview',
+        prompt: prompt,
+        config: {
+          numberOfVideos: 1,
+          resolution: '1080p',
+          aspectRatio: '9:16'
+        }
+      });
+
+      while (!operation.done) {
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        operation = await ai.operations.getVideosOperation({ operation: operation });
       }
-    });
 
-    while (!operation.done) {
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      operation = await ai.operations.getVideosOperation({ operation: operation });
+      const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+      if (!downloadLink) throw new Error("Video generation failed - no download link");
+
+      const response = await fetch(downloadLink, {
+        method: 'GET',
+        headers: {
+          'x-goog-api-key': (process.env.GEMINI_API_KEY as string),
+        },
+      });
+
+      const buffer = await response.arrayBuffer();
+      const base64Video = Buffer.from(buffer).toString('base64');
+      res.json({ video: `data:video/mp4;base64,${base64Video}` });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'AI Video generation failed' });
     }
-
-    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    if (!downloadLink) throw new Error("Video generation failed - no download link");
-
-    const response = await fetch(downloadLink, {
-      method: 'GET',
-      headers: {
-        'x-goog-api-key': (process.env.GEMINI_API_KEY as string),
-      },
-    });
-
-    const buffer = await response.arrayBuffer();
-    const base64Video = Buffer.from(buffer).toString('base64');
-    res.json({ video: `data:video/mp4;base64,${base64Video}` });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'AI Video generation failed' });
-  }
-});
+  });
 
   // 1. Brand Extraction (Save Only)
   app.post('/api/brand/save', (req, res) => {
     const { businessId, website, name, brandIdentity } = req.body;
-    
+
     try {
       db.prepare(`
         INSERT OR REPLACE INTO business_profiles (id, name, website, brand_identity)
@@ -315,29 +315,33 @@ app.post('/api/ai/generate-video', async (req, res) => {
   // 2. Asset Upload & Tagging (Save Tagging Results)
   app.post('/api/assets/upload', async (req, res) => {
     const { businessId, assets } = req.body; // assets is array of { url, type }
-    
+
     try {
       const uploadedAssets = await Promise.all(assets.map(async (a: any) => {
         const id = Math.random().toString(36).substr(2, 9);
-        let finalUrl = a.url;
+        let finalUrl = a.url; // Default to the base64 data URL for local usage
 
-        // If it's a base64 string, upload to GCS
-        if (a.url.startsWith('data:')) {
-          const mimeType = a.url.split(';')[0].split(':')[1];
-          const extension = mimeType.split('/')[1];
-          const base64Data = a.url.split(',')[1];
-          const buffer = Buffer.from(base64Data, 'base64');
-          
-          const folder = a.type === 'video' ? 'videos' : businessId;
-          const fileName = `${folder}/${id}.${extension}`;
-          const file = bucket.file(fileName);
-          
-          await file.save(buffer, {
-            metadata: { contentType: mimeType },
-            public: true,
-          });
-          
-          finalUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+        // Try GCS Upload, but fallback seamlessly if bucket isn't configured
+        if (a.url.startsWith('data:') && process.env.GOOGLE_APPLICATION_CREDENTIALS && bucketName) {
+          try {
+            const mimeType = a.url.split(';')[0].split(':')[1];
+            const extension = mimeType.split('/')[1];
+            const base64Data = a.url.split(',')[1];
+            const buffer = Buffer.from(base64Data, 'base64');
+
+            const folder = a.type === 'video' ? 'videos' : businessId;
+            const fileName = `${folder}/${id}.${extension}`;
+            const file = bucket.file(fileName);
+
+            await file.save(buffer, {
+              metadata: { contentType: mimeType },
+              public: true,
+            });
+
+            finalUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+          } catch (gcsError) {
+            console.warn("GCS Upload failed, falling back to local Base64 storage:", gcsError);
+          }
         }
 
         db.prepare(`
@@ -351,7 +355,7 @@ app.post('/api/ai/generate-video', async (req, res) => {
       res.json(uploadedAssets);
     } catch (error) {
       console.error('Upload error:', error);
-      res.status(500).json({ error: 'Failed to upload to Cloud Storage' });
+      res.status(500).json({ error: 'Failed to process asset upload' });
     }
   });
 
@@ -402,7 +406,7 @@ app.post('/api/ai/generate-video', async (req, res) => {
   // 4. Schedule
   app.post('/api/schedule/generate', (req, res) => {
     const { businessId, creativeIds, startDate } = req.body;
-    
+
     const stmt = db.prepare(`
       INSERT INTO schedules (id, business_id, creative_id, scheduled_at, platform)
       VALUES (?, ?, ?, ?, ?)
@@ -414,7 +418,7 @@ app.post('/api/ai/generate-video', async (req, res) => {
       const date = new Date(startDate);
       date.setDate(date.getDate() + idx);
       const scheduledAt = date.toISOString();
-      
+
       stmt.run(id, businessId, cid, scheduledAt, creative.platform);
       return { id, creativeId: cid, scheduledAt, platform: creative.platform };
     });
@@ -458,7 +462,7 @@ app.post('/api/ai/generate-video', async (req, res) => {
 
     const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     const filename = platform && platform !== 'all' ? `schedule_${platform}.csv` : 'schedule_all.csv';
-    
+
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
     res.send(csv);
