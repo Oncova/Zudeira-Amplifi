@@ -88,6 +88,12 @@ async function startServer() {
     next();
   });
 
+  // Request logging middleware
+  app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    next();
+  });
+
   // --- AI Generation Routes ---
 
   // Health check endpoint
@@ -509,13 +515,7 @@ Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.�
   });
 
   // --- Vite Middleware ---
-  // Setup API route protection BEFORE static file serving
-  app.use('/api/', (req, res, next) => {
-    // Log API requests for debugging
-    console.log(`[API] ${req.method} ${req.path}`);
-    next();
-  });
-
+  
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -523,17 +523,26 @@ Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.�
     });
     app.use(vite.middlewares);
   } else {
-    // In production, serve static files but skip API routes
-    app.use(express.static(path.join(__dirname, 'dist'), {
-      // Skip serving static files for API routes
-      skip: (req) => req.path.startsWith('/api/')
-    }));
+    // In production, only serve static files for non-API paths
+    app.use((req, res, next) => {
+      if (req.path.startsWith('/api/')) {
+        // Skip static file serving for API routes
+        return next();
+      }
+      express.static(path.join(__dirname, 'dist'))(req, res, next);
+    });
     
     // Catch-all for SPA - only for non-API routes
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
   }
+
+  // Error handler to catch and log 405s
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error(`[ERROR] ${req.method} ${req.path}:`, err);
+    res.status(500).json({ error: 'Internal server error' });
+  });
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
