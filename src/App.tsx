@@ -460,11 +460,14 @@ function BrandTab({ brand, setBrand }: { brand: BrandIdentity, setBrand: (b: Bra
 
 function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Dispatch<React.SetStateAction<Asset[]>>, key?: string }) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const dropZoneRef = React.useRef<HTMLDivElement>(null);
   const [isTagging, setIsTagging] = useState(false);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [selectedPromptId, setSelectedPromptId] = useState(IMAGEN_PROMPTS[0].id);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleEditImage = async (asset: Asset) => {
     const editPrompt = prompt("What would you like to change in this image? (e.g., 'add more gold decorations', 'make it look more like a night party')");
@@ -590,12 +593,14 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
     if (!files) return;
 
     if (files.length > 15) {
-      alert("You can only upload up to 15 photos at a time.");
+      setUploadError("You can only upload up to 15 photos at a time.");
       return;
     }
 
+    setUploadError(null);
+
     const filePromises = Array.from(files).map((file: File) => {
-      return new Promise<{ url: string, type: 'image' | 'video' }>((resolve) => {
+      return new Promise<{ url: string, type: 'image' | 'video' }>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (event) => {
           resolve({
@@ -603,19 +608,33 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
             type: file.type.startsWith('video') ? 'video' : 'image'
           });
         };
+        reader.onerror = () => {
+          reject(new Error(`Failed to read file: ${file.name}`));
+        };
         reader.readAsDataURL(file);
       });
     });
 
-    const assetData = await Promise.all(filePromises);
-
     try {
+      const assetData = await Promise.all(filePromises);
+      
       const response = await fetch('/api/assets/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ businessId: 'events-made-easy', assets: assetData })
       });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Server error (${response.status}): ${errorData || response.statusText}`);
+      }
+
       const newAssets = await response.json();
+      
+      if (!Array.isArray(newAssets)) {
+        throw new Error('Invalid response format from server');
+      }
+
       setAssets(prev => [...prev, ...newAssets]);
 
       // Trigger Tagging on Frontend
@@ -637,9 +656,42 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
         }
       }
     } catch (e) {
-      console.error(e);
+      const errorMessage = e instanceof Error ? e.message : 'Failed to upload files';
+      setUploadError(errorMessage);
+      console.error('Upload error:', e);
     } finally {
       setIsTagging(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      // Create a synthetic event-like object for handleFileChange
+      const event = {
+        target: { files }
+      } as React.ChangeEvent<HTMLInputElement>;
+      await handleFileChange(event);
     }
   };
 
@@ -654,6 +706,27 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
       exit={{ opacity: 0, scale: 1.02 }}
       className="space-y-12 max-w-7xl mx-auto"
     >
+      {uploadError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-start gap-3"
+        >
+          <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-rose-500 font-semibold">Upload Error</p>
+            <p className="text-sm text-rose-400 mt-1">{uploadError}</p>
+          </div>
+          <button
+            onClick={() => setUploadError(null)}
+            className="text-rose-500 hover:text-rose-400 transition-colors text-sm font-semibold"
+          >
+            Dismiss
+          </button>
+        </motion.div>
+      )}
+
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
           <div className="px-3 py-1 bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full text-[10px] font-bold text-[#D4AF37] uppercase tracking-widest w-fit">Media Lab</div>
@@ -671,7 +744,27 @@ function UploadTab({ assets, setAssets }: { assets: Asset[], setAssets: React.Di
         </div>
       </header>
 
-      {/* AI Generation Section */}
+      {/* Drag and Drop Zone */}
+      <motion.div
+        ref={dropZoneRef}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        animate={{
+          borderColor: isDragging ? '#B6718E' : 'rgba(255, 255, 255, 0.1)',
+          backgroundColor: isDragging ? 'rgba(182, 113, 142, 0.05)' : 'transparent'
+        }}
+        transition={{ duration: 0.2 }}
+        className="p-8 border-2 border-dashed rounded-[2rem] text-center space-y-4 cursor-pointer"
+      >
+        <div className="w-16 h-16 bg-white/5 rounded-2xl mx-auto flex items-center justify-center">
+          <Upload className="w-8 h-8 text-slate-500" />
+        </div>
+        <div>
+          <p className="text-white font-semibold">Drag and drop photos/videos here</p>
+          <p className="text-sm text-slate-400">or click the upload button above</p>
+        </div>
+      </motion.div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="glass-card p-8 rounded-[3rem] space-y-6 relative overflow-hidden group border border-white/5">
           <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#B6718E]/10 rounded-full blur-3xl group-hover:bg-[#B6718E]/20 transition-colors" />
