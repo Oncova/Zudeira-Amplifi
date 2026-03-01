@@ -17,10 +17,13 @@ jobs:
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ secrets.GCP_PROJECT }}
+          export_default_credentials: true
 
-      - name: Configure Docker to use gcloud
+      - name: Verify gcloud auth and configure Docker
         run: |
-          gcloud auth configure-docker --quiet
+          gcloud auth list
+          gcloud config list
+          gcloud auth configure-docker gcr.io --quiet
 
       - name: Build and push container image
         run: |
