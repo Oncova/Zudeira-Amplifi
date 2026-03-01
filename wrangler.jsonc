@@ -10,12 +10,12 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
-  ]
+  ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "zudeira-db",
-      "database_id": "PUT_YOUR_D1_DATABASE_ID_HERE"
+      "database_name": "zuldeira-db",
+      "database_id": "9fb71bc4-506c-4449-ad14-80d718712b83"
     }
   ]
 }
