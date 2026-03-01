@@ -317,7 +317,23 @@ Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.�
     const { businessId, assets } = req.body; // assets is array of { url, type }
 
     try {
+      if (!businessId) {
+        return res.status(400).json({ error: 'Missing businessId' });
+      }
+
+      if (!Array.isArray(assets)) {
+        return res.status(400).json({ error: 'Assets must be an array' });
+      }
+
+      if (assets.length === 0) {
+        return res.status(400).json({ error: 'No assets provided' });
+      }
+
       const uploadedAssets = await Promise.all(assets.map(async (a: any) => {
+        if (!a.url || !a.type) {
+          throw new Error('Each asset must have url and type');
+        }
+
         const id = Math.random().toString(36).substr(2, 9);
         let finalUrl = a.url; // Default to the base64 data URL for local usage
 
@@ -354,19 +370,25 @@ Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.�
 
       res.json(uploadedAssets);
     } catch (error) {
-      console.error('Upload error:', error);
-      res.status(500).json({ error: 'Failed to process asset upload' });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Upload error:', errorMessage, error);
+      res.status(500).json({ error: `Failed to process asset upload: ${errorMessage}` });
     }
   });
 
   app.post('/api/assets/update-tags', (req, res) => {
     const { assetId, tags, ranking } = req.body;
     try {
+      if (!assetId) {
+        return res.status(400).json({ error: 'Missing assetId' });
+      }
+
       db.prepare('UPDATE assets SET tags = ?, ranking = ? WHERE id = ?').run(JSON.stringify(tags), ranking, assetId);
       res.json({ status: 'updated' });
     } catch (e) {
-      console.error(e);
-      res.status(500).json({ error: 'Failed to update tags' });
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+      console.error('Update tags error:', errorMessage, e);
+      res.status(500).json({ error: `Failed to update tags: ${errorMessage}` });
     }
   });
 
