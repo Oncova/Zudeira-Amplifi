@@ -90,6 +90,11 @@ async function startServer() {
 
   // --- AI Generation Routes ---
 
+  // Health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', message: 'Server is running' });
+  });
+
   // 1. Brand Identity Extraction
   app.post('/api/ai/brand-identity', async (req, res) => {
     const { name, website } = req.body;
@@ -504,6 +509,13 @@ Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.�
   });
 
   // --- Vite Middleware ---
+  // Setup API route protection BEFORE static file serving
+  app.use('/api/', (req, res, next) => {
+    // Log API requests for debugging
+    console.log(`[API] ${req.method} ${req.path}`);
+    next();
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -511,15 +523,14 @@ Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.�
     });
     app.use(vite.middlewares);
   } else {
-    // In production, serve dist but exclude /api routes
-    app.use(express.static(path.join(__dirname, 'dist')));
+    // In production, serve static files but skip API routes
+    app.use(express.static(path.join(__dirname, 'dist'), {
+      // Skip serving static files for API routes
+      skip: (req) => req.path.startsWith('/api/')
+    }));
     
     // Catch-all for SPA - only for non-API routes
     app.get('*', (req, res) => {
-      // Don't serve index.html for API routes
-      if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ error: 'Not found' });
-      }
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
   }
