@@ -75,6 +75,19 @@ async function startServer() {
 
   app.use(express.json({ limit: '50mb' }));
 
+  // Enable CORS for all routes
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    
+    // Handle OPTIONS requests
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
+    next();
+  });
+
   // --- AI Generation Routes ---
 
   // 1. Brand Identity Extraction
@@ -498,8 +511,15 @@ Do NOT use cliché calls to action like “Buy Now” or “Limited Time Offer.�
     });
     app.use(vite.middlewares);
   } else {
+    // In production, serve dist but exclude /api routes
     app.use(express.static(path.join(__dirname, 'dist')));
+    
+    // Catch-all for SPA - only for non-API routes
     app.get('*', (req, res) => {
+      // Don't serve index.html for API routes
+      if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'Not found' });
+      }
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
   }
